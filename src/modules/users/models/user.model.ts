@@ -1,4 +1,5 @@
 import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import { UserRoles } from '../enums';
 
 @Table({ tableName: 'users', timestamps: true })
 export class User extends Model {
@@ -16,4 +17,11 @@ export class User extends Model {
 
   @Column({ type: DataType.TEXT })
   image: string;
+
+  @Column({
+    type: DataType.ENUM,
+    values: Object.values(UserRoles),
+    defaultValue: UserRoles.USER,
+  })
+  role: UserRoles;
 }

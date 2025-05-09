@@ -11,6 +11,8 @@ import { CreateDto, DeleteDto, FindByIdDto, UpdateDto } from './dtos';
 import { fsHelper } from 'src/helpers';
 import * as fs from 'fs';
 import * as path from 'path';
+import { UserRoles } from './enums';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService implements OnModuleInit {
@@ -21,6 +23,7 @@ export class UserService implements OnModuleInit {
   async onModuleInit() {
     try {
       await this.fs.MkdirUploads();
+      await this.#seedSuperAdmin();
       console.log('✅');
     } catch (error) {
       console.log('❌');
@@ -140,5 +143,36 @@ export class UserService implements OnModuleInit {
       message: 'success',
       data: user,
     };
+  }
+
+  async #seedSuperAdmin() {
+    try {
+      const SuperAdmin = [
+        {
+          name: 'Dilmuhammad',
+          email: 'dilmuhammadabdumalikov06@gmail.com',
+          password: '20060524',
+          role: UserRoles.SUPER_ADMIN,
+        },
+      ];
+
+      for (let u of SuperAdmin) {
+        const user = await this.userModel.findOne({ where: { email: u.email } });
+
+        if (!user) {
+          const hashedPassword = await bcrypt.hash(u.password, 10);
+
+          await this.userModel.create({
+            name: u.name,
+            email: u.email,
+            password: hashedPassword,
+            role: u.role,
+          });
+        }
+      }
+      console.log('✅')
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 }

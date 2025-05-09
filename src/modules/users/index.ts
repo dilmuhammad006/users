@@ -4,3 +4,6 @@ export * from './user.module';
 export * from './user.controller';
 export * from './interfaces';
 export * from './dtos';
+export * from './enums';
+export * from './auth.controller';
+export * from './auth.servie';

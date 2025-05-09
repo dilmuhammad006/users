@@ -4,6 +4,8 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'path';
 import { UserModule } from './modules';
+import { APP_GUARD } from '@nestjs/core';
+import { CheckAuth, CheckRole } from './guards';
 
 @Module({
   imports: [
@@ -29,6 +31,16 @@ import { UserModule } from './modules';
       autoLoadModels: true,
     }),
     UserModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: CheckAuth,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: CheckRole,
+    },
   ],
 })
 export class AppModule {}
