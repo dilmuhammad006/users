@@ -78,6 +78,7 @@ export class UserService implements OnModuleInit {
 
     const image = await this.fs.uploadFile(file);
 
+    const hashedPassword = bcrypt.hash(payload.password, 10);
     const user = await this.userModel.create({
       name: payload.name,
       email: payload.email,
