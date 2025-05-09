@@ -7,12 +7,19 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models';
-import { CreateDto, DeleteDto, FindByIdDto, UpdateDto } from './dtos';
+import {
+  CreateDto,
+  DeleteDto,
+  FindByIdDto,
+  GetAllDto,
+  UpdateDto,
+} from './dtos';
 import { fsHelper } from 'src/helpers';
 import * as fs from 'fs';
 import * as path from 'path';
 import { UserRoles } from './enums';
 import * as bcrypt from 'bcryptjs';
+import { count } from 'console';
 
 @Injectable()
 export class UserService implements OnModuleInit {
@@ -30,12 +37,18 @@ export class UserService implements OnModuleInit {
     }
   }
 
-  async GetAll() {
-    const users = await this.userModel.findAll();
+  async GetAll(payload: GetAllDto) {
+    const skip = (payload.page - 1) * payload.limit;
+    const users = await this.userModel.findAll({
+      limit: payload.limit,
+      offset: skip,
+      order: [[payload.sorrtField || 'id', payload.sortOrder || 'ASC']],
+    });
 
     return {
       message: 'succes',
       count: users.length,
+      page: payload.page,
       data: users,
     };
   }
@@ -157,7 +170,9 @@ export class UserService implements OnModuleInit {
       ];
 
       for (let u of SuperAdmin) {
-        const user = await this.userModel.findOne({ where: { email: u.email } });
+        const user = await this.userModel.findOne({
+          where: { email: u.email },
+        });
 
         if (!user) {
           const hashedPassword = await bcrypt.hash(u.password, 10);
@@ -170,7 +185,7 @@ export class UserService implements OnModuleInit {
           });
         }
       }
-      console.log('✅')
+      console.log('✅');
     } catch (error) {
       console.log(error.message);
     }

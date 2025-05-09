@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -18,7 +19,7 @@ import {
   ApiConsumes,
   ApiOperation,
 } from '@nestjs/swagger';
-import { CreateDto, UpdateDto, UpdateImageDto } from './dtos';
+import { CreateDto, GetAllDto, UpdateDto, UpdateImageDto } from './dtos';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Protected, Roles } from 'src/decorators';
 import { UserRoles } from './enums';
@@ -32,8 +33,8 @@ export class UserController {
   @Protected(true)
   @Roles([UserRoles.ADMIN, UserRoles.SUPER_ADMIN])
   @Get()
-  async GetAll() {
-    return await this.service.GetAll();
+  async GetAll(@Query() query: GetAllDto) {
+    return await this.service.GetAll(query);
   }
 
   @ApiBearerAuth()

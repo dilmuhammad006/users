@@ -15,7 +15,7 @@ import { AuthController } from './auth.controller';
       global: true,
       secret: 'test-key',
       signOptions: {
-        expiresIn: 600,
+        expiresIn: 6000,
       },
     }),
   ],

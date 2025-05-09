@@ -5,3 +5,4 @@ export * from './update';
 export * from './update.image';
 export * from './register';
 export * from './login.dto';
+export * from './get.all';
